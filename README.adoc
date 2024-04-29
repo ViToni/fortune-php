@@ -1,0 +1,3 @@
+= Reader for fortune files
+
+Implementation of a reader for fortune files in PHP.
