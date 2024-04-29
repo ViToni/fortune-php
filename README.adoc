@@ -1,3 +1,41 @@
 = Reader for fortune files
 
 Implementation of a reader for fortune files in PHP.
+
+== Development
+
+This project uses https://getcomposer.org/[composer] for dependency management.
+
+.Install dependencies
+[,shell]
+----
+composer install
+----
+
+== References
+
+=== Implementations
+
+* C
+** https://cgit.freebsd.org/src/tree/usr.bin/fortune/fortune[fortune - FreeBSD]
+** https://github.com/freebsd/freebsd-src/tree/main/usr.bin/fortune/fortune[fortune - FreeBSD - GitHub]
+** https://github.com/shlomif/fortune-mod[fortune-mod - Maintenance Version and Ongoing Development]
+* PHP
+** https://pear.php.net/package/File_Fortune/[File_Fortune] - by https://github.com/weierophinney[weierophinney]
+* Python
+** https://github.com/HubTou/fortune[fortune - by HubTou]
+* and many more...
+
+=== Cookies
+
+* http://fortunes.cat-v.org/[Jar of Fortune Files]
+* https://github.com/koitsu/fortune-mod-freebsd-classic/[Classic FreeBSD fortunes (incl. offensives)]
+* https://github.com/HubTou/fortunes-freebsd-classic[Classical FreeBSD fortune data files]
+* https://github.com/HubTou/fortunes-historical[Historical fortune data files]
+* https://github.com/JKirchartz/fortunes[Personal collection of Fortune files of JKirchartz]
+* https://github.com/alberanid/fortunes-spam[Fortune cookies taken from subjects and bodies of funny or strange SPAM messages]
+* ...
+
+=== Other
+
+* https://en.wikipedia.org/wiki/Fortune_(Unix)[fortune - Wikipedia]

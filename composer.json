@@ -1,0 +1,27 @@
+{
+    "name": "vitoni/fortune",
+    "description": "Reader for fortune databases",
+    "version": "0.0.1",
+    "type": "library",
+    "keywords": [
+        "fortune",
+        "fortune-mod",
+        "fortune-cookies"
+    ],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Victor Toni",
+            "email": "victor.toni@gmail.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^11.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "vitoni\\": "src/"
+        }
+    }
+}
