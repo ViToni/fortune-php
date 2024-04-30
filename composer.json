@@ -15,13 +15,19 @@
             "email": "victor.toni@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "php": ">=5.4"
+    },
     "require-dev": {
+        "php": ">=8.2",
         "phpunit/phpunit": "^11.1"
     },
     "autoload": {
         "psr-4": {
             "vitoni\\": "src/"
         }
+    },
+    "scripts": {
+        "test": "phpunit"
     }
 }

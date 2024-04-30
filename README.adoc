@@ -2,14 +2,50 @@
 
 Implementation of a reader for fortune files in PHP.
 
+== Usage
+
+.Retrieve random fortune
+[,php]
+----
+use vitoni\Fortunes;
+
+$fortunes = new Fortunes($filename);
+
+echo $fortunes->getRandom();
+----
+
+.Use Fortunes as (read-only) array
+[,php]
+----
+use vitoni\Fortunes;
+
+$fortunes = new Fortunes($filename);
+
+$randOffset = random_int(0, $fortunes->count() - 1);
+
+echo $fortunes[$randOffset];
+----
+
 == Development
 
 This project uses https://getcomposer.org/[composer] for dependency management.
 
-.Install dependencies
+.Install dependencies and create autoloader script
 [,shell]
 ----
 composer install
+----
+
+.Execute tests (indirectly with `composer`)
+[,shell]
+----
+composer run-script test
+----
+
+.Execute tests (directly with `phpunit`)
+[,shell]
+----
+./vendor/bin/phpunit
 ----
 
 == References
