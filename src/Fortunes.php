@@ -165,10 +165,21 @@ class Fortunes implements
      */
     public function getRandom(): string
     {
-        $maxOffset = $this->count() - 1;
-        $randOffset = random_int(0, $maxOffset);
+        $randOffset = $this->getRandomOffset();
 
         return $this->offsetGet($randOffset);
+    }
+
+    /**
+     * Returns a random offset for a fortune from the fortune file.
+     *
+     * @return int A random offset for a fortune
+     */
+    public function getRandomOffset(): int
+    {
+        $maxOffset = $this->count() - 1;
+
+        return random_int(0, $maxOffset);
     }
 
 }

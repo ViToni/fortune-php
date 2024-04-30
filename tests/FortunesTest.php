@@ -57,15 +57,11 @@ final class FortunesTest extends TestCase
 
         $values = array();
         for ($i = 0; $i < 32; $i++) {
-            $fortune = $fortunes->getRandom();
+            $offset = $fortunes->getRandomOffset();
 
-            // mis-using the array as a set
-            // works only because $fortune is exclusively of type string
-            $values[$fortune] = 1;
+            $values[$offset] = 1;
         }
 
-        // ensuring there was some randomness
-        // => the "set" has more than one unique entry
         $this->assertGreaterThan(1, count($values));
     }
 

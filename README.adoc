@@ -21,7 +21,7 @@ use vitoni\Fortunes;
 
 $fortunes = new Fortunes($filename);
 
-$randOffset = random_int(0, $fortunes->count() - 1);
+$randOffset = $fortunes->getRandomOffset();
 
 echo $fortunes[$randOffset];
 ----
