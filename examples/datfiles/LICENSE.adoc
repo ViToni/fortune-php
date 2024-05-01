@@ -1,0 +1,9 @@
+= Licenses of fortune files
+
+== `murphy`
+
+The file `murphy` has been retrieved as is from:
+
+https://github.com/koitsu/fortune-mod-freebsd-classic/blob/829d1f84312cfd62cc25c90e7789ab3272167fcb/datfiles/murphy
+
+All copyrights apply as in the source repository.
