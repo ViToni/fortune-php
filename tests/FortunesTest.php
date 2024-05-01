@@ -26,6 +26,7 @@ final class FortunesTest extends TestCase
         $fortunes = new Fortunes($filename);
 
         $this->assertEquals(0, $fortunes->count());
+        $this->assertEquals(0, $fortunes->key());
         $this->assertFalse($fortunes->offsetExists(0));
     }
 
@@ -37,13 +38,29 @@ final class FortunesTest extends TestCase
         $fortunes = new Fortunes($filename);
 
         $this->assertEquals(4, $fortunes->count());
+
+        // array access
+
         $this->assertFalse($fortunes->offsetExists(4));
+        $this->assertFalse($fortunes->offsetExists($fortunes->count()));
 
         for ($i = 0; $i < $fortunes->count(); $i++) {
             $value = $fortunes[$i];
             $expected = $fortunePrefix . ($i + 1);
 
             $this->assertEquals($expected, $value);
+        }
+
+        // iterator
+
+        $this->assertEquals(0, $fortunes->key());
+
+        foreach ($fortunes as $key => $value) {
+            $expected = $fortunePrefix . ($key + 1);
+
+            $this->assertEquals($expected, $value);
+
+            $this->assertTrue($fortunes->offsetExists($key));
         }
     }
 

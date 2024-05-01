@@ -26,6 +26,18 @@ $randOffset = $fortunes->getRandomOffset();
 echo $fortunes[$randOffset];
 ----
 
+.Access using an Iterator
+[,php]
+----
+use vitoni\Fortunes;
+
+$fortunes = new Fortunes($filename);
+
+foreach ($fortunes as $fortune) {
+    ...
+}
+----
+
 == Development
 
 This project uses https://getcomposer.org/[composer] for dependency management.

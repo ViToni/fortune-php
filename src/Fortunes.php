@@ -18,7 +18,8 @@ namespace vitoni;
  */
 class Fortunes implements
     \ArrayAccess,
-    \Countable
+    \Countable,
+    \Iterator
 {
     /**
      * Used in fortune files as delimiter between fortunes. It acts only as a
@@ -31,6 +32,8 @@ class Fortunes implements
     private readonly string $_filename;
 
     private readonly array $_mappedFortunes;
+
+    private $_offset = 0;
 
     public function __construct(string $filename)
     {
@@ -53,6 +56,8 @@ class Fortunes implements
         try {
             $this->_mappedFortunes = self::_mapFortunes($file);
             $this->_filename = $filename;
+
+            $this->rewind();
         } finally {
             fclose($file);
         }
@@ -165,6 +170,36 @@ class Fortunes implements
     public function offsetUnset(mixed $offset): void
     {
         throw new \Exception('Unsupported operation: "offsetUnset"');
+    }
+
+    public function rewind(): void
+    {
+        $this->_offset = 0;
+    }
+
+    public function next(): void
+    {
+        $this->_offset++;
+    }
+
+    public function valid(): bool
+    {
+        return ($this->_offset < $this->count());
+    }
+
+    public function key(): int
+    {
+        return $this->_offset;
+    }
+
+    /**
+     * Returns the fortune from the fortune file at the current offset.
+     *
+     * @return string The fortune at the current (internal) offset.
+     */
+    public function current(): string
+    {
+        return $this->offsetGet($this->_offset);
     }
 
     /**
