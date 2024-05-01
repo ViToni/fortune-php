@@ -72,6 +72,7 @@ class Fortunes implements
 
         $fileOffset = 0;
         $fortuneLength = 0;
+        $fortune = '';
         $isFortune = false;
 
         while ($line = fgets($file)) {
@@ -79,7 +80,7 @@ class Fortunes implements
             if (0 === strpos($line, self::DELIM)) {
                 // if read a fortune before save its position
                 if ($isFortune) {
-                    self::_addFortuneMap($mappedFortunes, $fileOffset, $fortuneLength);
+                    self::addFortuneMap($mappedFortunes, $fortune, $fileOffset, $fortuneLength);
 
                     $isFortune = false;
 
@@ -87,6 +88,7 @@ class Fortunes implements
                     $fileOffset += $fortuneLength;
                     // reset to be prepared for next fortune
                     $fortuneLength = 0;
+                    $fortune = '';
                 }
                 // next fortune can only start _after_ the delimited line
                 $fileOffset += strlen($line);
@@ -96,25 +98,32 @@ class Fortunes implements
                 }
                 // increase length of fortune by line found
                 $fortuneLength += strlen($line);
+                $fortune = $fortune . $line;
             }
         }
 
         // there might be no delimiter as trigger after the last fortune in a file
         if ($isFortune) {
-            self::_addFortuneMap($mappedFortunes, $fileOffset, $fortuneLength);
+            self::addFortuneMap($mappedFortunes, $fortune, $fileOffset, $fortuneLength);
         }
 
         return $mappedFortunes;
     }
 
     /**
-     * Adds the given coordinates as a FortuneMap to the array.
+     * Adds the given coordinates as a FortuneMap to the array if the size of
+     * the trimmed fortune is greater than zero. Trimming avoids adding empty
+     * lines as fortunes.
      */
-    private static function _addFortuneMap(array &$mappedFortunes, int $offset, int $length): void
+    public static function addFortuneMap(array &$mappedFortunes, string $fortune, int $offset, int $length): void
     {
-        $mappedFortune = new FortuneMap($offset, $length);
+        // add only fortune with content - discard fortunes consisting
+        // only out of characters regarded as whitespaces
+        if (0 < strlen(trim($fortune))) {
+            $mappedFortune = new FortuneMap($offset, $length);
 
-        array_push($mappedFortunes, $mappedFortune);
+            array_push($mappedFortunes, $mappedFortune);
+        }
     }
 
     public function count(): int

@@ -65,6 +65,32 @@ final class FortunesTest extends TestCase
         $this->assertGreaterThan(1, count($values));
     }
 
+    public function testAddingFortunes(): void
+    {
+        $mappedFortunes = array();
+
+        $fortune = "All warranties expire upon payment of invoice.\n";
+        $offset = 0;
+        $length = strlen($fortune);
+
+        $this->assertEquals(0, count($mappedFortunes));
+        Fortunes::addFortuneMap($mappedFortunes, $fortune, $offset, $length);
+        $this->assertEquals(1, count($mappedFortunes));
+    }
+
+    public function testSkippAddingEmptyFortunes(): void
+    {
+        $mappedFortunes = array();
+
+        $fortune = "  \n\t\t\n";
+        $offset = 0;
+        $length = strlen($fortune);
+
+        $this->assertEquals(0, count($mappedFortunes));
+        Fortunes::addFortuneMap($mappedFortunes, $fortune, $offset, $length);
+        $this->assertEquals(0, count($mappedFortunes));
+    }
+
     // helper methods
 
     public static function fileWithoutFortunesProvider()
@@ -76,6 +102,9 @@ final class FortunesTest extends TestCase
             ],
             'file containing only delimiter' => [
                 '01_only_delimiter'
+            ],
+            'file containing only empty fortunes' => [
+                '02_empty_fortunes'
             ]
         ];
     }
@@ -92,6 +121,10 @@ final class FortunesTest extends TestCase
             'multi-line fortunes' => [
                 '11_multiline_fortunes',
                 "This\nis\nmultiline\nfortune "
+            ],
+            'ignore empty fortunes' => [
+                '12_ignore_empty_fortunes',
+                'This is fortune '
             ]
         ];
     }
