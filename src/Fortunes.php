@@ -12,6 +12,7 @@
 namespace vitoni;
 
 use vitoni\Fortunes\Util\Reader;
+use vitoni\Fortunes\Util\FortuneMap;
 
 /**
  * The class scans a fortune file to map the regions where fortunes are found.
@@ -223,29 +224,6 @@ class Fortunes implements
         $maxOffset = $this->count() - 1;
 
         return random_int(0, $maxOffset);
-    }
-
-}
-
-/**
- * Class holding the position and length of a fortune within the fortune file.
- */
-final class FortuneMap
-{
-    /**
-     * Where does the fortune start within the file.
-     */
-    public readonly int $offset;
-
-    /**
-     * Fortune length.
-     */
-    public readonly int $length;
-
-    public function __construct(int $offset, int $length)
-    {
-        $this->offset = $offset;
-        $this->length = $length;
     }
 
 }
