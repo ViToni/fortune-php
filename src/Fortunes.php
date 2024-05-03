@@ -12,7 +12,7 @@
 namespace vitoni;
 
 use vitoni\Fortunes\Util\Reader;
-use vitoni\Fortunes\Util\FortuneMap;
+use vitoni\Fortunes\Util\FortuneMapper;
 
 /**
  * The class scans a fortune file to map the regions where fortunes are found.
@@ -23,14 +23,6 @@ class Fortunes implements
     \Countable,
     \Iterator
 {
-    /**
-     * Used in fortune files as delimiter between fortunes. It acts only as a
-     * delimiter, if a line starts with this symbol.
-     * As lines starting with delimiter are ignored the delimiter can also be
-     * used to add comments to fortune files.
-     */
-    private const DELIM = '%';
-
     private readonly string $_filename;
 
     private readonly array $_mappedFortunes;
@@ -38,11 +30,6 @@ class Fortunes implements
     private $_offset = 0;
 
     public function __construct(string $filename)
-    {
-        $this->_setFile($filename);
-    }
-
-    private function _setFile(string $filename): void
     {
         if (empty($filename)) {
             throw new \InvalidArgumentException('$filename MUST NOT be empty');
@@ -54,83 +41,10 @@ class Fortunes implements
             throw new \InvalidArgumentException('$filename MUST be readable: ' . $filename);
         }
 
-        $file = fopen($filename, 'r');
-        try {
-            $this->_mappedFortunes = self::_mapFortunes($file);
-            $this->_filename = $filename;
+        $this->_mappedFortunes = FortuneMapper::mapFile($filename);
+        $this->_filename = $filename;
 
-            $this->rewind();
-        } finally {
-            fclose($file);
-        }
-    }
-
-    /**
-     * Returns an array containing the found fortunes.
-     * Depending on the file the array can be empty.
-     *
-     * @param $file Fortune file to be mapped
-     *
-     * @return array Array of FortuneMap
-     */
-    private static function _mapFortunes($file): array
-    {
-        $mappedFortunes = array();
-
-        $fileOffset = 0;
-        $fortuneLength = 0;
-        $fortune = '';
-        $isFortune = false;
-
-        while ($line = fgets($file)) {
-            // skip file header and all delimiters
-            if (0 === strpos($line, self::DELIM)) {
-                // if read a fortune before save its position
-                if ($isFortune) {
-                    self::addFortuneMap($mappedFortunes, $fortune, $fileOffset, $fortuneLength);
-
-                    $isFortune = false;
-
-                    // adjust position by length of the fortune found
-                    $fileOffset += $fortuneLength;
-                    // reset to be prepared for next fortune
-                    $fortuneLength = 0;
-                    $fortune = '';
-                }
-                // next fortune can only start _after_ the delimited line
-                $fileOffset += strlen($line);
-            } else {
-                if (!$isFortune) {
-                    $isFortune = true;
-                }
-                // increase length of fortune by line found
-                $fortuneLength += strlen($line);
-                $fortune = $fortune . $line;
-            }
-        }
-
-        // there might be no delimiter as trigger after the last fortune in a file
-        if ($isFortune) {
-            self::addFortuneMap($mappedFortunes, $fortune, $fileOffset, $fortuneLength);
-        }
-
-        return $mappedFortunes;
-    }
-
-    /**
-     * Adds the given coordinates as a FortuneMap to the array if the size of
-     * the trimmed fortune is greater than zero. Trimming avoids adding empty
-     * lines as fortunes.
-     */
-    public static function addFortuneMap(array &$mappedFortunes, string $fortune, int $offset, int $length): void
-    {
-        // add only fortune with content - discard fortunes consisting
-        // only out of characters regarded as whitespaces
-        if (0 < strlen(trim($fortune))) {
-            $mappedFortune = new FortuneMap($offset, $length);
-
-            array_push($mappedFortunes, $mappedFortune);
-        }
+        $this->rewind();
     }
 
     public function count(): int

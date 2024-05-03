@@ -9,77 +9,71 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-namespace vitoni;
+namespace vitoni\Fortunes\Util;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-final class FortunesTest extends TestCase
+final class FortuneMapperTest extends TestCase
 {
-    const TEST_FILES_DIR = __DIR__ . '/_files';
+    private const TEST_FILES_DIR = __DIR__ . '/../../_files';
 
     #[DataProvider('fileWithoutFortunesProvider')]
     public function testFileWithoutFortunes(string $filename): void
     {
         $filename = self::TEST_FILES_DIR . '/' . $filename;
 
-        $fortunes = new Fortunes($filename);
+        $mappedFortunes = FortuneMapper::mapFile($filename);
 
-        $this->assertEquals(0, $fortunes->count());
-        $this->assertEquals(0, $fortunes->key());
-        $this->assertFalse($fortunes->offsetExists(0));
+        $this->assertEquals(0, count($mappedFortunes));
     }
 
+    /**
+     * This tests covers also the functionality of the Reader.
+     */
     #[DataProvider('fortuneFileProvider')]
     public function testFortuneFile(string $filename, string $fortunePrefix): void
     {
         $filename = self::TEST_FILES_DIR . '/' . $filename;
 
-        $fortunes = new Fortunes($filename);
+        $mappedFortunes = FortuneMapper::mapFile($filename);
 
-        $this->assertEquals(4, $fortunes->count());
+        $this->assertEquals(4, count($mappedFortunes));
 
-        // array access
+        foreach ($mappedFortunes as $key => $mappedFortune) {
+            $expected = $fortunePrefix . ($key + 1) . "\n";
 
-        $this->assertFalse($fortunes->offsetExists(4));
-        $this->assertFalse($fortunes->offsetExists($fortunes->count()));
+            $fortune = Reader::read($filename, $mappedFortune->offset, $mappedFortune->length);
 
-        for ($i = 0; $i < $fortunes->count(); $i++) {
-            $value = $fortunes[$i];
-            $expected = $fortunePrefix . ($i + 1);
-
-            $this->assertEquals($expected, $value);
-        }
-
-        // iterator
-
-        $this->assertEquals(0, $fortunes->key());
-
-        foreach ($fortunes as $key => $value) {
-            $expected = $fortunePrefix . ($key + 1);
-
-            $this->assertEquals($expected, $value);
-
-            $this->assertTrue($fortunes->offsetExists($key));
+            $this->assertEquals($expected, $fortune);
         }
     }
 
-    // this test might be flaky once every billion times
-    // but ensures that no fixed offset has been used by mistake
-    public function testRandomness(): void
+
+    public function testAddingFortuneMap(): void
     {
-        $filename = self::TEST_FILES_DIR . '/10_singleline_fortunes';
+        $mappedFortunes = array();
 
-        $fortunes = new Fortunes($filename);
+        $fortune = "All warranties expire upon payment of invoice.\n";
+        $offset = 0;
+        $length = strlen($fortune);
 
-        $values = array();
-        for ($i = 0; $i < 32; $i++) {
-            $offset = $fortunes->getRandomOffset();
+        $this->assertEquals(0, count($mappedFortunes));
+        FortuneMapper::addFortuneMap($mappedFortunes, $fortune, $offset, $length);
+        $this->assertEquals(1, count($mappedFortunes));
+    }
 
-            $values[$offset] = 1;
-        }
+    public function testSkippAddingFortuneMapWithEmptyFortune(): void
+    {
+        $mappedFortunes = array();
 
-        $this->assertGreaterThan(1, count($values));
+        $fortune = "  \n\t\t\n";
+        $offset = 0;
+        $length = strlen($fortune);
+
+        $this->assertEquals(0, count($mappedFortunes));
+        FortuneMapper::addFortuneMap($mappedFortunes, $fortune, $offset, $length);
+        $this->assertEquals(0, count($mappedFortunes));
     }
 
     // helper methods
@@ -116,7 +110,7 @@ final class FortunesTest extends TestCase
             'ignore empty fortunes' => [
                 '12_ignore_empty_fortunes',
                 'This is fortune '
-            ]
+            ],
         ];
     }
 
