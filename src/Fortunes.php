@@ -11,6 +11,7 @@
  */
 namespace vitoni;
 
+use vitoni\Fortunes\Util\Reader;
 
 /**
  * The class scans a fortune file to map the regions where fortunes are found.
@@ -149,10 +150,8 @@ class Fortunes implements
 
         $mappedFortune = $this->_mappedFortunes[$offset];
 
-        $fortune = file_get_contents(
+        $fortune = Reader::read(
             $this->_filename,
-            FALSE,
-            null,
             $mappedFortune->offset,
             $mappedFortune->length
         );
