@@ -39,4 +39,9 @@ final class FortuneMap
         $this->length = $length;
     }
 
+    public static function __set_state(array $array): FortuneMap
+    {
+        return new FortuneMap((int) $array["offset"], (int) $array["length"]);
+    }
+
 }

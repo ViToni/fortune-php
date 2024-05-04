@@ -38,6 +38,47 @@ foreach ($fortunes as $fortune) {
 }
 ----
 
+== Over-engineered example
+
+Re-reading the fortune file / directory to find all fortunes on each call might be not the best idea.
+In case of a MOTD this might work but for a web page this approach might not fit.
+
+One can use the `indexer` example to create a static index of all fortunes.
+This index can be used as long as the files don't change (it could be used even then when one only appends to existing files with the downside of missing out on new fortunes).
+
+.Outputs a ready to use PHP script with Fortunes set up with a static index
+[,shell]
+----
+php examples/indexer.php tests/_files
+----
+
+.Static reader demo
+[,shell]
+----
+php examples/indexer.php tests/_files \
+  | cat - <(echo 'echo $fortunes->getRandom() . "\\n";') \
+  | php
+----
+
+What the snippet does:
+
+* Creates a static index and prepares a Fortunes instance
+* Uses output from `indexer` and appends `echo $fortunes->getRandom() . "\n";`
+* Pipes everything to `php` to execute the created script to retrieve a random fortune
+
+.Output
+[,txt]
+----
+This is fortune 4
+----
+
+=== Other approaches
+
+One could created a static PHP readable version with the fortunes included, or something totally different. +
+But where would the fun be?
+
+The https://cgit.freebsd.org/src/tree/usr.bin/fortune/fortune[original fortunes] uses `.dat` files which do basically the same but have a per file index.
+
 == Development
 
 This project uses https://getcomposer.org/[composer] for dependency management.
