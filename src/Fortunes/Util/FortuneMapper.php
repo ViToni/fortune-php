@@ -11,6 +11,8 @@
  */
 namespace vitoni\Fortunes\Util;
 
+use \FilesystemIterator;
+
 /**
  * The class scans fortune files to map the regions where fortunes are found.
  * These maps can can be used later on to retrieve the fortunes from the
@@ -25,6 +27,69 @@ class FortuneMapper
      * used to add comments to fortune files.
      */
     private const DELIM = '%';
+
+    public static function map(string $path): array
+    {
+        if (empty($path)) {
+            throw new \InvalidArgumentException('$path MUST NOT be empty');
+        }
+        if (!is_readable($path)) {
+            throw new \InvalidArgumentException('$path MUST be readable: ' . $path);
+        }
+
+        if (is_dir($path)) {
+            return self::mapDirectory($path);
+        }
+
+        if (is_file($path)) {
+            $mappedFiles = array();
+
+            self::addMappedFortuneFile($mappedFiles, $path);
+
+            return $mappedFiles;
+        }
+
+        throw new \InvalidArgumentException('$path MUST be actual file or directory: ' . $path);
+    }
+
+    public static function mapDirectory(string $path): array
+    {
+        if (empty($path)) {
+            throw new \InvalidArgumentException('$path MUST NOT be empty');
+        }
+        if (!is_dir($path)) {
+            throw new \InvalidArgumentException('$path MUST be actual directory: ' . $path);
+        }
+        if (!is_readable($path)) {
+            throw new \InvalidArgumentException('$path MUST be readable: ' . $path);
+        }
+
+        $mappedFiles = array();
+
+        $fsIter = new FilesystemIterator($path, FilesystemIterator::SKIP_DOTS);
+        foreach ($fsIter as $fileinfo) {
+            if ($fileinfo->isFile()) {
+                $filename = $fileinfo->getPathname();
+                if (!$fileinfo->isReadable()) {
+                    throw new \InvalidArgumentException('File not readable: ' . $filename);
+                }
+
+                self::addMappedFortuneFile($mappedFiles, $filename);
+            }
+        }
+
+        return $mappedFiles;
+    }
+
+    public static function addMappedFortuneFile(array &$mappedFiles, string $filename)
+    {
+        $mappedFortunes = self::mapFile($filename);
+
+        // add only files with fortunes
+        if (0 < count($mappedFortunes)) {
+            $mappedFiles[$filename] = $mappedFortunes;
+        }
+    }
 
     /**
      * Returns an array containing the found fortunes.

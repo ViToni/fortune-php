@@ -76,6 +76,60 @@ final class FortuneMapperTest extends TestCase
         $this->assertEquals(0, count($mappedFortunes));
     }
 
+    public function testSkipEmptyFortuneFiles(): void
+    {
+        $mappedFortuneFiles = FortuneMapper::mapDirectory(self::TEST_FILES_DIR);
+
+        // this array might need to be updated when files are added
+        $filesWithoutFortunes = array(
+            '00_empty_file',
+            '01_only_delimiter'
+        );
+
+        // this array needs to be updated when files are added
+        $filesWithFortunes = array(
+            '10_singleline_fortunes',
+            '11_multiline_fortunes',
+            '12_ignore_empty_fortunes'
+        );
+
+        foreach ($mappedFortuneFiles as $filename => $mappedFortunes) {
+            foreach ($filesWithoutFortunes as $fileWithoutFortunes) {
+                $this->assertFalse(str_contains($filename, $fileWithoutFortunes));
+            }
+            $fileWithFortunesFound = false;
+            foreach ($filesWithFortunes as $fileWithFortunes) {
+                if (str_contains($filename, $fileWithFortunes)) {
+                    $fileWithFortunesFound = true;
+                    break;
+                }
+            }
+            $this->assertTrue($fileWithFortunesFound, 'File not found: ' . $filename);
+        }
+    }
+
+    public function testAddMappedFortuneFile(): void
+    {
+        $filename = self::TEST_FILES_DIR . '/10_singleline_fortunes';
+
+        $mappedFortunefiles = array();
+        $this->assertEquals(0, count($mappedFortunefiles));
+
+        FortuneMapper::addMappedFortuneFile($mappedFortunefiles, $filename);
+        $this->assertEquals(1, count($mappedFortunefiles));
+    }
+
+    public function testAddMappedFortuneFileWithEmptyFortuneFiles(): void
+    {
+        $filename = self::TEST_FILES_DIR . '/00_empty_file';
+
+        $mappedFortunefiles = array();
+        $this->assertEquals(0, count($mappedFortunefiles));
+
+        FortuneMapper::addMappedFortuneFile($mappedFortunefiles, $filename);
+        $this->assertEquals(0, count($mappedFortunefiles));
+    }
+
     // helper methods
 
     public static function fileWithoutFortunesProvider()

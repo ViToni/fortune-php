@@ -15,7 +15,8 @@ use vitoni\Fortunes\Util\Reader;
 use vitoni\Fortunes\Util\FortuneMapper;
 
 /**
- * The class scans a fortune file to map the regions where fortunes are found.
+ * The class scans a fortune file / directory to map the regions where
+ * fortunes are found.
  * One can iterate over the fortunes found or retrieve a random fortune.
  */
 class Fortunes implements
@@ -23,38 +24,45 @@ class Fortunes implements
     \Countable,
     \Iterator
 {
-    private readonly string $_filename;
+    /**
+     * Total number of fortunes found.
+     */
+    private readonly int $_totalCount;
 
-    private readonly array $_mappedFortunes;
+    /**
+     * All fortunes found mapped to their files and region.
+     */
+    private readonly array $_mappedFortuneFiles;
 
     private $_offset = 0;
 
-    public function __construct(string $filename)
+    public function __construct(string $path)
     {
-        if (empty($filename)) {
-            throw new \InvalidArgumentException('$filename MUST NOT be empty');
-        }
-        if (!is_file($filename)) {
-            throw new \InvalidArgumentException('$filename MUST be actual file: ' . $filename);
-        }
-        if (!is_readable($filename)) {
-            throw new \InvalidArgumentException('$filename MUST be readable: ' . $filename);
+        $mappedFortuneFiles = FortuneMapper::map($path);
+
+        $totalCount = 0;
+        foreach ($mappedFortuneFiles as $mappedFortunes) {
+            $totalCount += count($mappedFortunes);
         }
 
-        $this->_mappedFortunes = FortuneMapper::mapFile($filename);
-        $this->_filename = $filename;
+        $this->_totalCount = $totalCount;
+        $this->_mappedFortuneFiles = $mappedFortuneFiles;
 
         $this->rewind();
     }
 
     public function count(): int
     {
-        return count($this->_mappedFortunes);
+        return $this->_totalCount;
     }
 
     public function offsetExists(mixed $offset): bool
     {
-        return isset($this->_mappedFortunes[$offset]);
+        if (gettype($offset) !== 'integer') {
+            return false;
+        }
+
+        return $offset < $this->count();
     }
 
     public function offsetGet(mixed $offset): null|string
@@ -63,17 +71,41 @@ class Fortunes implements
             return null;
         }
 
-        $mappedFortune = $this->_mappedFortunes[$offset];
+        // to find the given offset which spans all files, $start and $end are
+        // used as a search window to find the actual file. the search window
+        // is only as wide as number of fortunes in the inspected file
+        $start = 0;
+        $end = 0;
+        foreach ($this->_mappedFortuneFiles as $filepath => $mappedFortunes) {
+            // increase upper bound by number of fortunes in current file
+            // to move search window
+            $end += count($mappedFortunes);
 
-        $fortune = Reader::read(
-            $this->_filename,
-            $mappedFortune->offset,
-            $mappedFortune->length
-        );
+            // need only to check upper bound as $offset is positive and
+            // search starts at zero. maybe $offset is now in range
+            if ($offset < $end) {
+                // map $offset to offset in array of mapped fortunes of file
+                $offsetInMappedFortunes = $offset - $start;
+                $mappedFortune = $mappedFortunes[$offsetInMappedFortunes];
 
-        // remove trailing newline (if any)
-        // the last fortune of a file might miss a trailing newline
-        return rtrim($fortune, "\n");
+                $fortune = Reader::read(
+                    $filepath,
+                    $mappedFortune->offset,
+                    $mappedFortune->length
+                );
+
+                // remove trailing newline (if any)
+                // the last fortune of a file might miss a trailing newline
+                return rtrim($fortune, "\n");
+            }
+
+            // move lower bound of search window. $start needs to be updated
+            // to compute the actual offset within the matching file
+            $start = $end;
+        }
+
+        // should never get here
+        return null;
     }
 
     public function offsetSet(mixed $offset, mixed $value): void
@@ -107,7 +139,7 @@ class Fortunes implements
     }
 
     /**
-     * Returns the fortune from the fortune file at the current offset.
+     * Returns the fortune from the fortune file(s) at the current offset.
      *
      * @return string The fortune at the current (internal) offset.
      */
@@ -117,7 +149,7 @@ class Fortunes implements
     }
 
     /**
-     * Returns a random fortune from the fortune file.
+     * Returns a random fortune from the mapped fortune file(s).
      *
      * @return string A random fortune
      */
