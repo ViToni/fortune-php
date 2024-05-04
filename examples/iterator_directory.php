@@ -6,7 +6,7 @@ use vitoni\Fortunes;
 
 $path = __DIR__ . '/../tests/_files/';
 
-$fortunes = new Fortunes($path);
+$fortunes = Fortunes::from($path);
 
 foreach ($fortunes as $fortune) {
     echo "-----\n";

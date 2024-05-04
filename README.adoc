@@ -9,7 +9,7 @@ Implementation of a reader for fortune files in PHP.
 ----
 use vitoni\Fortunes;
 
-$fortunes = new Fortunes($path);
+$fortunes = Fortunes::from($path);
 
 echo $fortunes->getRandom();
 ----
@@ -19,7 +19,7 @@ echo $fortunes->getRandom();
 ----
 use vitoni\Fortunes;
 
-$fortunes = new Fortunes($path);
+$fortunes = Fortunes::from($path);
 
 $randOffset = $fortunes->getRandomOffset();
 
@@ -31,7 +31,7 @@ echo $fortunes[$randOffset];
 ----
 use vitoni\Fortunes;
 
-$fortunes = new Fortunes($path);
+$fortunes = Fortunes::read($path);
 
 foreach ($fortunes as $fortune) {
     ...

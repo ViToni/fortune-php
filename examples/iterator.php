@@ -6,7 +6,7 @@ use vitoni\Fortunes;
 
 $filename = __DIR__ . '/datfiles/murphy';
 
-$fortunes = new Fortunes($filename);
+$fortunes = Fortunes::from($filename);
 
 $steps = (int) ($fortunes->count() / 10);
 foreach ($fortunes as $key => $fortune) {

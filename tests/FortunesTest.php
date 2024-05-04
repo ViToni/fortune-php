@@ -23,7 +23,7 @@ final class FortunesTest extends TestCase
     {
         $filename = self::TEST_FILES_DIR . '/' . $filename;
 
-        $fortunes = new Fortunes($filename);
+        $fortunes = Fortunes::from($filename);
 
         $this->assertEquals(0, $fortunes->count());
         $this->assertEquals(0, $fortunes->key());
@@ -35,7 +35,7 @@ final class FortunesTest extends TestCase
     {
         $filename = self::TEST_FILES_DIR . '/' . $filename;
 
-        $fortunes = new Fortunes($filename);
+        $fortunes = Fortunes::from($filename);
 
         $this->assertEquals(4, $fortunes->count());
 
@@ -70,7 +70,7 @@ final class FortunesTest extends TestCase
     {
         $filename = self::TEST_FILES_DIR . '/10_singleline_fortunes';
 
-        $fortunes = new Fortunes($filename);
+        $fortunes = Fortunes::from($filename);
 
         $values = array();
         for ($i = 0; $i < 32; $i++) {

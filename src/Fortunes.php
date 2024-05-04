@@ -15,9 +15,13 @@ use vitoni\Fortunes\Util\Reader;
 use vitoni\Fortunes\Util\FortuneMapper;
 
 /**
- * The class scans a fortune file / directory to map the regions where
- * fortunes are found.
- * One can iterate over the fortunes found or retrieve a random fortune.
+ * The Fortunes class allows to access individual fortunes or get a random
+ * fortune out of multiple fortune files.
+ *
+ * This implementation uses a pre-processed data structure which contains the
+ * maps of all fortunes found. Pre-processed maps can be used as an optimization
+ * to avoid scanning a given fortune file / directory on each instantiation if
+ * there no changes.
  */
 class Fortunes implements
     \ArrayAccess,
@@ -36,10 +40,8 @@ class Fortunes implements
 
     private $_offset = 0;
 
-    public function __construct(string $path)
+    public function __construct(array $mappedFortuneFiles)
     {
-        $mappedFortuneFiles = FortuneMapper::map($path);
-
         $totalCount = 0;
         foreach ($mappedFortuneFiles as $mappedFortunes) {
             $totalCount += count($mappedFortunes);
@@ -170,6 +172,20 @@ class Fortunes implements
         $maxOffset = $this->count() - 1;
 
         return random_int(0, $maxOffset);
+    }
+
+    /**
+     * Scans a fortune file / directory for fortunes and returns a configured
+     * Fortunes instance.
+     * 
+     * The method uses FortuneMapper and as such is not optimized as it scans
+     * the given file / directory each time when called.
+     */
+    public static function from(string $path): Fortunes
+    {
+        $mappedFortuneFiles = FortuneMapper::map($path);
+
+        return new Fortunes($mappedFortuneFiles);
     }
 
 }
