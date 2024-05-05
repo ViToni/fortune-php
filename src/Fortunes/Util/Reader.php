@@ -23,13 +23,22 @@ class Reader
      */
     public static function read(string $filename, int $offset, int $length): bool|string
     {
-        return file_get_contents(
+        $fortune = file_get_contents(
             $filename,
             FALSE,
             null,
             $offset,
             $length
         );
+
+        if (false !== $fortune) {
+            $encrpyted = substr($filename, -2) === '-o';
+            if ($encrpyted) {
+                $fortune = str_rot13($fortune);
+            }
+        }
+
+        return $fortune;
     }
 
 }

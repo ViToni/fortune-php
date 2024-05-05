@@ -116,6 +116,14 @@ final class FortunesTest extends TestCase
             'ignore empty fortunes' => [
                 '12_ignore_empty_fortunes',
                 'This is fortune '
+            ],
+            'encrypted single-file fortunes' => [
+                '13_singleline_n_empty_fortunes-o',
+                'This is fortune '
+            ],
+            'encrypted multi-file fortunes' => [
+                '14_multiline_n_empty_fortunes-o',
+                "This\nis\nmultiline\nfortune "
             ]
         ];
     }

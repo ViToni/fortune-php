@@ -83,14 +83,17 @@ final class FortuneMapperTest extends TestCase
         // this array might need to be updated when files are added
         $filesWithoutFortunes = array(
             '00_empty_file',
-            '01_only_delimiter'
+            '01_only_delimiter',
+            '02_empty_fortunes'
         );
 
         // this array needs to be updated when files are added
         $filesWithFortunes = array(
             '10_singleline_fortunes',
             '11_multiline_fortunes',
-            '12_ignore_empty_fortunes'
+            '12_ignore_empty_fortunes',
+            '13_singleline_n_empty_fortunes-o',
+            '14_multiline_n_empty_fortunes-o'
         );
 
         foreach ($mappedFortuneFiles as $filename => $mappedFortunes) {
@@ -165,6 +168,14 @@ final class FortuneMapperTest extends TestCase
                 '12_ignore_empty_fortunes',
                 'This is fortune '
             ],
+            'encrypted single-file fortunes' => [
+                '13_singleline_n_empty_fortunes-o',
+                'This is fortune '
+            ],
+            'encrypted multi-file fortunes' => [
+                '14_multiline_n_empty_fortunes-o',
+                "This\nis\nmultiline\nfortune "
+            ]
         ];
     }
 
