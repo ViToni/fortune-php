@@ -33,6 +33,21 @@ class Parser
         'parenthesis' => ' (',
     ];
 
+    public static function parse(string $fortune): Quote
+    {
+        if (!is_string($fortune) || empty($fortune)) {
+            throw new \InvalidArgumentException('Fortune MUST be non-empty string');
+        }
+
+        $quoteParts = self::getParts($fortune);
+
+        return new Quote(
+            $quoteParts['quote'],
+            $quoteParts['source'],
+            $quoteParts['cite']
+        );
+    }
+
     /**
      * Parse fortune into an associative array ('quote', 'source', 'cite').
      *
