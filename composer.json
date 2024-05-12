@@ -27,6 +27,11 @@
             "vitoni\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "vitoni\\": "tests/"
+        }
+    },
     "scripts": {
         "test": "phpunit"
     }
