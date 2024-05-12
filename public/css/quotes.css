@@ -1,0 +1,35 @@
+figure.quote {
+    margin:             0;
+    padding:            1rem 1.5rem;
+
+    border:             .075rem solid;
+    border-radius:      1rem;
+    border-color:       #e0e0e0;
+
+    background-color:   #fff8f0;
+
+    font-size:          1.3em;
+    line-height:        1.3em;
+}
+
+figure.quote figcaption {
+    float:              right;
+
+    padding-top:        .5em;
+    padding-right:      0;
+    padding-bottom:     0;
+    padding-left:       1em;
+
+    font-size:          .85em;
+    line-height:        .85em;
+    text-indent:        1.25em hanging;
+}
+
+figure.quote figcaption::before {
+    content:            '\2014\0A0'; /* '&mdash;&nbsp;' */
+}
+
+figure.quote blockquote {
+    margin:             0;
+    padding:            0;
+}

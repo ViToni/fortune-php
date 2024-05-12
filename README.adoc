@@ -89,6 +89,12 @@ This project uses https://getcomposer.org/[composer] for dependency management.
 composer install
 ----
 
+.Start minimal web server on `127.0.0.1:8000`
+[,shell]
+----
+composer run-script dev
+----
+
 .Execute tests (indirectly with `composer`)
 [,shell]
 ----
