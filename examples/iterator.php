@@ -4,7 +4,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use vitoni\Fortunes;
 
-$filename = __DIR__ . '/datfiles/murphy';
+$filename = __DIR__ . '/../public/datfiles/murphy';
 
 $fortunes = Fortunes::from($filename);
 
